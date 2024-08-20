@@ -34,3 +34,62 @@ void draw(SDL_Renderer *renderer, int *cells, int rows, int cols)
         }
     }
 }
+
+
+void game_of_life(int *cells, int *cells_new, int rows, int cols)
+{
+    int i, j;
+    int p = 0; 
+    int life = 0; 
+    
+    //updates cells
+    for (i = 0; i < cols; i++)
+    {
+        for (j = 0; j < rows; j++)
+        {
+            p = i*rows + j;
+
+            life += cells[(p+1)];
+            life += cells[(p-1)]; 
+
+            life += cells[(p-rows-1) % (rows*cols)];
+            life += cells[(p-rows) % (rows*cols)];
+            life += cells[(p-rows+1) % (rows*cols)];
+
+            life += cells[(p+rows-1) % (rows*cols)];
+            life += cells[(p+rows) % (rows*cols)];
+            life += cells[(p+rows+1) % (rows*cols)];
+
+            if (cells[p] == 1 && life < 2) cells_new[p] = 0;
+            if (cells[p] == 1 && (life == 2 || life == 3)) cells_new[p] = 1;
+            if (cells[p] == 1 && life > 3) cells_new[p] = 0;
+            if (cells[p] == 0 && life == 3) cells_new[p] = 1;
+
+            life = 0;
+        }
+    }
+    
+    for (i = 0; i < rows*cols; i++)
+    {
+        cells[i] = cells_new[i];
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

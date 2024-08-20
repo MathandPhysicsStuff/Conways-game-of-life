@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 #include "SDL2/SDL.h"
 #include "header.h"
@@ -14,46 +16,36 @@ int main()
 
     window = SDL_CreateWindow("Hello SDL",
                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                               1280, 720,
+                               SCREEN_WIDTH, SCREEN_HEIGHT,
                                SDL_WINDOW_SHOWN);
 
     renderer = SDL_CreateRenderer(window,
                                    -1,
                                    SDL_RENDERER_ACCELERATED);
     
+    srand(time(0));
+
     int rows = SCREEN_WIDTH / CELL_SIZE;
     int cols = SCREEN_HEIGHT / CELL_SIZE;
-    printf("%d %d\n", rows, cols);
     int cells[rows*cols];
+    int cells_new[rows*cols];
 
-    int count = 0;
+    int x = 0;
 
     for (int i = 0; i < cols; i++)
     {
         for (int j = 0; j < rows; j++)
         {
-            if (count % 31 == 0)
-            {
-                cells[i*rows + j] = 1;
-            }
-            else 
-            {
-                cells[i*rows + j] = 0;
-            }
-            count++;
+                //cells[i*rows + j] = 0;
+                cells_new[i*rows + j] = 0;
+                
+                x = rand() % 100;
+                if (x < 20) cells[i*rows + j] = 1;
+                else cells[i*rows + j] = 0;
+                
         }
     }
     
-    for (int i = 0; i < cols; i++)
-    {
-        for (int j = 0; j < rows; j++)
-        {
-            printf("%d ", cells[i*rows + j]);
-        }
-        printf("\n");
-    }
-
-
     SDL_bool running = SDL_TRUE;
     while (running == SDL_TRUE)
     {
@@ -71,11 +63,12 @@ int main()
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
         SDL_RenderClear(renderer);
         
-        draw_grid(renderer, rows, cols);
+        //draw_grid(renderer, rows, cols);
         draw(renderer, cells, rows, cols); 
+        game_of_life(cells, cells_new, rows, cols); 
 
         SDL_RenderPresent(renderer);
-        SDL_Delay(100);
+        SDL_Delay(60);
     }
     
     SDL_DestroyWindow(window);
